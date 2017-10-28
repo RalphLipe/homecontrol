@@ -23,8 +23,11 @@ SHADES_DICTIONARY = {
     'bedroom': SHADES_MASTER_BED,
     'master': SHADES_MASTER_BED,
     'master bedroom': SHADES_MASTER_BED,
+    'upstairs': SHADES_MASTER_BED,
     'pool room': SHADES_DOWNSTAIRS,
-    'downstairs': SHADES_DOWNSTAIRS
+    'downstairs': SHADES_DOWNSTAIRS,
+    'all': SHADES_ALL,
+    'all the': SHADES_ALL
 }
 
 
@@ -39,9 +42,9 @@ ZONES = SceneGroup((
     GrafikEye(['nook', 'breakfast nook'], 11,  off=0, on=1, dim=2, desk=3, table=4),
     GrafikEye('backyard', 12, off=0, on=1, patio=2, fireplace_on=3, path_only=4, fireplace_off=6),
     GrafikEye('front door', 9, all_off=0, entry_on=1, entry_dim=2, outside_on=3, outside_off=4, entry_off=15),
-    Dimmer('laundry room', 25, on_setting=70, dim_setting=30),
-    Dimmer('end of hall', 27),
-    Dimmer('dining room', 30),
+    Dimmer(['laundry room', 'laundry'], 25, on_setting=70, dim_setting=30),
+    Dimmer(['end of hall', 'end of the hall'], 27),
+    Dimmer(['dining room', 'dining'], 30),
     Dimmer('powder lights', 21),
     Dimmer('powder sink', 28),
     Switch('fountain', 20),
@@ -92,6 +95,7 @@ VIRTUAL_SCENES = SceneGroup((
     SubScene(['patio fireplace', 'backyard fireplace'], ZONES['backyard'], 'fireplace on', 'fireplace off'),
     SubScene(['family room fireplace', 'living room fireplace'], ZONES['family room'], 'fireplace on', 'fireplace off'),
     SubScene('office fireplace', ZONES['office'], 'fireplace on', 'fireplace off'),
+    SubScene(['bathroom fan', 'fan'], ZONES['master bathroom'], 'fan on', 'fan off'),
     SubScene(['master fireplace', 'master bedroom fireplace'], ZONES['master bedroom'], 'fireplace on', 'fireplace off')
     ))
 
@@ -124,7 +128,9 @@ MASTER_CONTROLS = MasterControlGroup((
 ))
 
 
+#
 # This method prints the list of scenes that can be controlled by Alexa.
+#
 def print_automation_parameters():
     print("SHADE_ROOMS")
     for key in SHADES_DICTIONARY.keys():

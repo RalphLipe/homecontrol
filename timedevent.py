@@ -35,7 +35,7 @@ class TimedEventQueue:
                     timeout = None
                 else:
                     # make sure the timeout is not negative.
-                    timeout = max(0.0, (datetime.now() - self._queue[0].event_time).total_seconds())  # make sure +
+                    timeout = max(0.0, (datetime.now() - self._queue[0].event_time).total_seconds())
             self._check_event_queue.wait(timeout=timeout)
             if self._continue_running:
                 with self._lock:
@@ -50,8 +50,8 @@ class TimedEventQueue:
     def stop(self):
         with self._lock:
             self._continue_running = False
-            self._check_event_queue.set()
             self._queue = []
+            self._check_event_queue.set()
         self._thread.join()
 
     def add_event(self, event):
@@ -66,6 +66,5 @@ class TimedEventQueue:
                 if not isinstance(event, event_class):
                     new_queue.append(event)
             self._queue = new_queue
-            self._check_event_queue.set()  # TODO: Is this necessary???
-
+            # Do not need to set the _check_event_queue event because it's not possible to have a shorter timeout now
 
