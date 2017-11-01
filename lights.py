@@ -2,6 +2,9 @@ from radiora import RadioRA, RaiseButtonPress, LowerButtonPress, MasterControlBu
 from scenes import ZONES, MASTER_CONTROLS, SHADES_ALL
 
 
+import logging
+logger = logging.getLogger(__name__)
+
 #
 # Magic things:
 # * When vacation is pressed then vacation lighting mode turns on.
@@ -30,7 +33,9 @@ class Lights(RadioRA):
             if garage.buttons[feedback.button_number] == 'vacation':
                 self.home.vacation_mode.enable()
                 if feedback.state == STATE_OFF:         # Two presses shuts all the shades
-                    self.home.shades.down(SHADES_ALL)   # Do it twice because the signal is sometimes missed
+                    self.home.shades.down(SHADES_ALL)   # Do it 4 times because the signal is sometimes missed
+                    self.home.shades.down(SHADES_ALL)
+                    self.home.shades.down(SHADES_ALL)
                     self.home.shades.down(SHADES_ALL)
             else:
                 self.home.vacation_mode.disable()

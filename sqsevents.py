@@ -60,9 +60,9 @@ class SqsEvents:
             elif action == "dim":
                 scene.dim(self.home.lights)
             else:
-                logger.debug("Unknown action '{0}' for light event".format(action))
+                logger.warning("Unknown action '{0}' for light event".format(action))
         else:
-            logger.debug("Unknown scene '{0}' for light event.".format(scene_name))
+            logger.warning("Unknown scene '{0}' for light event.".format(scene_name))
 
     def _do_shade_event(self, event):
         action = event['shade_action']
@@ -74,7 +74,11 @@ class SqsEvents:
             if action == "raise" or action == "open":
                 self.home.shades.up(shade)
                 self.home.shades.up(shade)
+                self.home.shades.up(shade)
+                self.home.shades.up(shade)
             elif action == "lower" or action == "close":
+                self.home.shades.down(shade)
+                self.home.shades.down(shade)
                 self.home.shades.down(shade)
                 self.home.shades.down(shade)
             else:

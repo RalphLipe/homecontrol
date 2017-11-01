@@ -6,6 +6,10 @@ from timedevent import TimedEvent
 from scenes import VACATION_SCENES
 
 
+import logging
+logger = logging.getLogger(__name__)
+
+
 #
 #   This event builds the script of events for vacation mode for a single day.  Once it executes, it will rescue
 #
@@ -34,10 +38,10 @@ class VacationLightEvent(TimedEvent):
 
     def execute(self):
         if self.scene_off is not None:
-            print("Vacation turning off {0}".format(self.scene_off.names[0]))
+            logger.info("Vacation turning off {0}".format(self.scene_off.names[0]))
             self.scene_off.off(self.home.lights)
         if self.scene_on is not None:
-            print("Vacation turning on {0}".format(self.scene_on.names[0]))
+            logger.info("Vacation turning on {0}".format(self.scene_on.names[0]))
             self.scene_on.on(self.home.lights)
 
 
