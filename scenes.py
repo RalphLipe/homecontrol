@@ -144,3 +144,25 @@ def print_automation_parameters():
     for key, scene in ALEXA_SCENES.items():
         if scene.supports_dim:
             print(key)
+    print()
+    print()
+    print("PYTHON CODE FOR LAMBAD FUNCTION")
+    print("#--------------------------- BEGIN SCENE CODE ---------------------------")
+    print()
+    print("SHADE_ROOMS = (")
+    for key in SHADES_DICTIONARY.keys():
+        print('    "{0}",'.format(key))
+    print(")")
+    print()
+    print("LIGHT_SCENES = (")
+    for key in ALEXA_SCENES.keys():
+        print('    "{0}",'.format(key))
+    print(")")
+    print()
+    print("DIMMABLE_SCENES = (")
+    for key, scene in ALEXA_SCENES.items():
+        if scene.supports_dim:
+            print('    "{0}",'.format(key))
+    print(")")
+    print()
+    print("#---------------------------- END SCENE CODE ----------------------------")
