@@ -1,7 +1,7 @@
 from lights import Lights
 from timedevent import TimedEventQueue
 from vacationmode import VacationMode
-from garagetimer import GarageTimer
+from garagetimer import GarageTimer, StairsTimer
 from sqsevents import SqsEvents
 from somfyrts import SomfyRTS
 from datetime import timedelta
@@ -14,6 +14,7 @@ class Home:
         self.timed_event_queue = TimedEventQueue()
         self.vacation_mode = VacationMode(self)  # interval=timedelta(seconds=20))  # *** TEST VACATION
         self.garage_light_timer = GarageTimer(self, garage_delay)
+        self.stairs_light_timer = StairsTimer(self, garage_delay)  # TODO Move to config
 
         self.shades = SomfyRTS(port_shades, thread=True)    # Shades don't use lights or external events
         self.lights = Lights(self, port_lights)             # Lights use shades (leave & vacation buttons)

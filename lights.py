@@ -5,6 +5,7 @@ from scenes import ZONES, MASTER_CONTROLS, SHADES_ALL
 import logging
 logger = logging.getLogger(__name__)
 
+
 #
 # Magic things:
 # * When vacation is pressed then vacation lighting mode turns on.
@@ -39,6 +40,8 @@ class Lights(RadioRA):
                     self.home.shades.down(SHADES_ALL)
             else:
                 self.home.vacation_mode.disable()
+                if garage.buttons[feedback.button_number] == 'home':
+                    self.home.stairs_light_timer.reset_and_start()
         else:
             self.home.vacation_mode.disable()
 
