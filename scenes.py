@@ -146,7 +146,7 @@ def print_automation_parameters():
             print(key)
     print()
     print()
-    print("PYTHON CODE FOR LAMBAD FUNCTION")
+    print("PYTHON CODE FOR LAMBDA FUNCTION")
     print("#--------------------------- BEGIN SCENE CODE ---------------------------")
     print()
     print("SHADE_ROOMS = (")
