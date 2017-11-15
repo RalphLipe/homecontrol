@@ -112,9 +112,9 @@ VACATION_SCENES = SceneGroup((
     ZONES['master closet']
     ))
 
-ALEXA_SCENES = SceneGroup()
-ALEXA_SCENES.add_scenes(VIRTUAL_SCENES.all_scenes)
-ALEXA_SCENES.add_scenes(ZONES.all_scenes)
+ALL_SCENES = SceneGroup()
+ALL_SCENES.add_scenes(VIRTUAL_SCENES.all_scenes)
+ALL_SCENES.add_scenes(ZONES.all_scenes)
 
 # There are two unassigned master controls and they give no feedback.  They are the one next to the backyard grafik
 # eye and the controller at the landing on the main floor that controls the upstairs (bottom of stairs right)
@@ -137,11 +137,11 @@ def print_automation_parameters():
         print(key)
     print()
     print("LIGHT_SCENES")
-    for key in ALEXA_SCENES.keys():
+    for key in ALL_SCENES.keys():
         print(key)
     print()
     print("DIMMABLE_SCENES")
-    for key, scene in ALEXA_SCENES.items():
+    for key, scene in ALL_SCENES.items():
         if scene.supports_dim:
             print(key)
     print()
@@ -155,12 +155,12 @@ def print_automation_parameters():
     print(")")
     print()
     print("LIGHT_SCENES = (")
-    for key in ALEXA_SCENES.keys():
+    for key in ALL_SCENES.keys():
         print('    "{0}",'.format(key))
     print(")")
     print()
     print("DIMMABLE_SCENES = (")
-    for key, scene in ALEXA_SCENES.items():
+    for key, scene in ALL_SCENES.items():
         if scene.supports_dim:
             print('    "{0}",'.format(key))
     print(")")

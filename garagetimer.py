@@ -27,8 +27,11 @@ class LightTimer:
 
     def reset_and_start(self):
         self.stop()
-        logger.info("Starting %s timer", self.zone)
-        self.home.timed_event_queue.add_event(self.light_event_class(self))
+        if self.delay.total_seconds() > 0:
+            logger.info("Starting %s timer", self.zone)
+            self.home.timed_event_queue.add_event(self.light_event_class(self))
+        else:
+            logger.info("Timer %s not started because it is disabled in the current configuration", self.zone)
 
     def stop(self):
         logger.info("Stopping %s timer", self.zone)

@@ -1,0 +1,20 @@
+{
+    "port_lights": "/dev/???",
+    "port_shades": "/dev/xxx",
+    "queue_name": "SimpleFirst.fifo",
+    "max_message_age": 90,
+    "garage_delay": 300,
+    "stairs_delay": 300,
+    "vacation start": 0,
+    "vacation end": 0,
+    "vacation interval": 1800,
+    "logging": {
+        "__init__": 10,
+        "__main__": 10,
+        "garagetimer": 10,
+        "lights": 10,
+        "sqsevents": 10,
+        "timedevent": 10,
+        "vacationmode": 10
+    }
+}

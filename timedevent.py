@@ -3,6 +3,9 @@ import bisect
 
 from datetime import datetime
 
+import logging
+logger = logging.getLogger(__name__)
+
 
 class TimedEvent:
     def __init__(self, event_time):
