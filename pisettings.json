@@ -1,6 +1,6 @@
 {
-    "port_lights": "/dev/???",
-    "port_shades": "/dev/xxx",
+    "port_lights": "/dev/ttyUSB1",
+    "port_shades": "/dev/ttyUSB0",
     "queue_name": "SimpleFirst.fifo",
     "max_message_age": 90,
     "garage_delay": 300,
