@@ -19,9 +19,9 @@ class LightTimedEvent(TimedEvent):
 
 
 class LightTimer:
-    def __init__(self, home, delay: timedelta, zone: Scene, light_event_class):
+    def __init__(self, home, delay: int, zone: Scene, light_event_class):
         self.home = home
-        self.delay = delay
+        self.delay = timedelta(seconds=delay)
         self.zone = zone
         self.light_event_class = light_event_class
 
