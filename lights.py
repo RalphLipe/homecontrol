@@ -46,7 +46,11 @@ class Lights(RadioRA):
             self.home.vacation_mode.disable()
 
     def _local_zone_change(self, feedback: LocalZoneChange):
-        logger.info("Local zone %i changed to %s", feedback.zone_number, feedback.state)
+        zone = ZONES.zone_for_feedback(feedback)
+        if zone is None:
+            logger.info("Unknown local zone %i changed to %s", feedback.zone_number, feedback.state)
+        else:
+            logger.info("%s changed to %s", zone, feedback.state)
         if ZONES['garage'].zone_number != feedback.zone_number:
             self.home.vacation_mode.disable()
 
