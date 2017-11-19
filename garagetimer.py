@@ -42,7 +42,7 @@ class GarageTimer(LightTimer):
     class GarageTimedEvent(LightTimedEvent):
         pass
 
-    def __init__(self, home, delay: timedelta):
+    def __init__(self, home, delay: int):
         LightTimer.__init__(self, home, delay, ZONES['garage'], self.GarageTimedEvent)
 
 
@@ -50,5 +50,5 @@ class StairsTimer(LightTimer):
     class StairsTimedEvent(LightTimedEvent):
         pass
 
-    def __init__(self, home, delay: timedelta):
+    def __init__(self, home, delay: int):
         LightTimer.__init__(self, home, delay, VIRTUAL_SCENES['stairs down'], self.StairsTimedEvent)

@@ -35,6 +35,9 @@ wheels/
 pip-log.txt
 pip-delete-this-directory.txt
 
+# Persistent store local file TODO: This may need to move
+persistentstore.json
+
 # Unit test / coverage reports
 htmlcov/
 .tox/

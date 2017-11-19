@@ -10,7 +10,7 @@ logger = logging.getLogger(__name__)
 
 
 class SqsEvents:
-    def __init__(self, home, queue_name, max_message_age):
+    def __init__(self, home, queue_name: str, max_message_age: int):
         self.home = home
         self.continue_running = True
         self.queue_name = queue_name

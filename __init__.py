@@ -1,6 +1,7 @@
 import json
 
 from threading import Event
+from persistentstore import PersistentStore
 from lights import Lights
 from timedevent import TimedEventQueue
 from vacationmode import VacationMode
@@ -16,6 +17,8 @@ logger = logging.getLogger(__name__)
 # This configuration is used if no file is specified.  In addition to being the default test configuration, it serves
 # as the documentation for the file contents.
 DEFAULT_CONFIG = {
+    # File name for persistent store
+    'persistent_store': 'persistentstore.json',
     # Serial port for lights
     'port_lights': 'TEST',
     # Serial port for shades
@@ -76,6 +79,8 @@ class Home:
             module_logger.addHandler(console)
             # TODO:  Add ability to log to different files, etc...
 
+        self.persistent_store = PersistentStore(config['persistent_store'])
+
         self.timed_event_queue = TimedEventQueue()
         # TODO:  More vacation mode options in config.
         self.vacation_mode = VacationMode(self)
@@ -97,6 +102,9 @@ class Home:
         self.shades = SomfyRTS(port_shades, thread=True)
         self.lights = Lights(self, port_lights)
         self.sqs_events = SqsEvents(self, config['queue_name'], config['max_message_age'])
+
+        # Now make sure vacation mode is re-enabled if it is currenly on in the persistent store (power failed)
+        self.vacation_mode.init_from_persistent_store()
 
     def __enter__(self):
         """Performs no function.  Returns original object (self)."""

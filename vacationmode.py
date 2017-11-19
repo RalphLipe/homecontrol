@@ -53,15 +53,27 @@ class VacationMode:
         self.home = home
         self.enabled = False
 
+    # After all the services have been started this method is called.  If the persistent store shows that we are
+    # in vacation mode then we probably just had a power failure.
+    def init_from_persistent_store(self):
+        if self.home.persistent_store.get_value('vacation_mode', default=False):
+            logger.info("Enabling vacation mode because enabled in persistent store")
+            self.enable()
+
     def enable(self, delay=timedelta(minutes=5)):
         if not self.enabled:
+            logger.info("Enabling vacation mode")
             self.enabled = True
+            self.home.persistent_store['vacation_mode'] = True
             self.home.timed_event_queue.add_event(VacationBuildEvent(datetime.now() + delay, self))
 
     def disable(self):
-        self.enabled = False
-        self.home.timed_event_queue.remove_events(VacationBuildEvent)
-        self.home.timed_event_queue.remove_events(VacationLightEvent)
+        if self.enabled:
+            logger.info("Disabling vacation mode")
+            self.enabled = False
+            self.home.persistent_store['vacation_mode'] = False
+            self.home.timed_event_queue.remove_events(VacationBuildEvent)
+            self.home.timed_event_queue.remove_events(VacationLightEvent)
 
     def create_scene_script(self, date):
         if isinstance(self.start, timedelta):
