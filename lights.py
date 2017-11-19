@@ -28,16 +28,16 @@ class Lights(RadioRA):
         self.master_control_button_press_monitoring(True)
 
     def _master_control_button_press(self, feedback: MasterControlButtonPress):
+        logger.info("Master control %i, pressed button %i", feedback.master_control_number, feedback.button_number)
         garage = MASTER_CONTROLS['garage']
         if feedback.master_control_number == garage.master_control_number:
             self.home.garage_light_timer.reset_and_start()
             if garage.buttons[feedback.button_number] == 'vacation':
+                logger.info("Vacation button pressed.  Enabling vacation mode")
                 self.home.vacation_mode.enable()
                 if feedback.state == STATE_OFF:         # Two presses shuts all the shades
-                    self.home.shades.down(SHADES_ALL)   # Do it 4 times because the signal is sometimes missed
-                    self.home.shades.down(SHADES_ALL)
-                    self.home.shades.down(SHADES_ALL)
-                    self.home.shades.down(SHADES_ALL)
+                    logger.info("Vacation button pressed while on - closing shades")
+                    self.home.shades.down(SHADES_ALL * 4)   # Do it 4 times because the signal is sometimes missed
             else:
                 self.home.vacation_mode.disable()
                 if garage.buttons[feedback.button_number] == 'home':
@@ -46,6 +46,7 @@ class Lights(RadioRA):
             self.home.vacation_mode.disable()
 
     def _local_zone_change(self, feedback: LocalZoneChange):
+        logger.info("Local zone %i changed to %s", feedback.zone_number, feedback.state)
         if ZONES['garage'].zone_number != feedback.zone_number:
             self.home.vacation_mode.disable()
 
