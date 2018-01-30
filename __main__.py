@@ -39,7 +39,10 @@ if __name__ == "__main__":
 
     house = Home(args.config)
 
-    ui_thread = threading.Thread(target=lambda: ui_thread_proc(house))
+    ui_thread = threading.Thread(target=lambda: ui_thread_proc(house), daemon=True)
     ui_thread.start()
 
-    exit(house.wait_for_shut_down())
+    exit_code = house.wait_for_shut_down()
+    logger.info("Exiting with code %i", exit_code)
+
+    exit(exit_code)

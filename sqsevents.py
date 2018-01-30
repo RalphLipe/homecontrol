@@ -24,30 +24,34 @@ class SqsEvents:
         self._thread.join()
 
     def _thread_poll_event_queue(self, queue_name):
-        sqs = boto3.resource('sqs')
-        queue = sqs.get_queue_by_name(QueueName=queue_name)
-        logger.info("Opened SQS queue %s", queue_name)
-        while self.continue_running:
-            messages = queue.receive_messages(WaitTimeSeconds=20, AttributeNames=['SentTimestamp'])
-            for msg in messages:
-                logger.info("Event {0}".format(msg.body))
-                epoch_ms = int(msg.attributes['SentTimestamp'])
-                msg_time = datetime.fromtimestamp(epoch_ms / 1000)
-                msg_age = datetime.now() - msg_time
-                if msg_age > self.max_message_age:
-                    logger.info("Discarding event because it was sent {0} seconds ago".format(msg_age.total_seconds()))
-                else:
-                    event = json.loads(msg.body)
-                    if 'event_type' in event:
-                        if event['event_type'] == 'change_lights':
-                            self._do_light_event(event)
-                        elif event['event_type'] == 'change_shades':
-                            self._do_shade_event(event)
-                        elif event['event_type'] == 'reboot':
-                            self.home.shut_down(255)
-                        else:
-                            logger.debug("Unable to parse parameters for event")
+        try:
+            sqs = boto3.resource('sqs')
+            queue = sqs.get_queue_by_name(QueueName=queue_name)
+            logger.info("Opened SQS queue %s", queue_name)
+            while self.continue_running:
+                messages = queue.receive_messages(WaitTimeSeconds=20, AttributeNames=['SentTimestamp'])
+                for msg in messages:
+                    logger.info("Event {0}".format(msg.body))
+                    epoch_ms = int(msg.attributes['SentTimestamp'])
+                    msg_time = datetime.fromtimestamp(epoch_ms / 1000)
+                    msg_age = datetime.now() - msg_time
+                    if msg_age > self.max_message_age:
+                        logger.info("Discarding event because it was sent {0} seconds ago".format(msg_age.total_seconds()))
+                    else:
+                        event = json.loads(msg.body)
+                        if 'event_type' in event:
+                            if event['event_type'] == 'change_lights':
+                                self._do_light_event(event)
+                            elif event['event_type'] == 'change_shades':
+                                self._do_shade_event(event)
+                            elif event['event_type'] == 'reboot':
+                                self.home.shut_down(255)
+                            else:
+                                logger.error("Unable to parse parameters for event")
                 msg.delete()
+        except Exception as inst:
+            print("Exception during queue event servicing {0}".format(inst))
+            self.home.shut_down(255)
 
     def _do_light_event(self, event):
         action = event['light_action']
