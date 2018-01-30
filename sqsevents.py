@@ -48,7 +48,7 @@ class SqsEvents:
                                 self.home.shut_down(255)
                             else:
                                 logger.error("Unable to parse parameters for event")
-                msg.delete()
+                    msg.delete()
         except Exception as inst:
             print("Exception during queue event servicing {0}".format(inst))
             self.home.shut_down(255)
