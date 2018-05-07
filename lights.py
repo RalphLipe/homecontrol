@@ -1,5 +1,5 @@
 from radiora import RadioRA, RaiseButtonPress, LowerButtonPress, MasterControlButtonPress, LocalZoneChange, STATE_OFF
-from scenes import ZONES, MASTER_CONTROLS, SHADES_ALL
+from scenes import ZONES, MASTER_CONTROLS, SHADES_ALL, ALL_SCENES
 
 
 import logging
@@ -31,7 +31,7 @@ class Lights(RadioRA):
         logger.info("Master control %i, pressed button %i", feedback.master_control_number, feedback.button_number)
         garage = MASTER_CONTROLS['garage']
         if feedback.master_control_number == garage.master_control_number:
-            self.home.garage_light_timer.reset_and_start()
+            self.home.get_scene_timer(ALL_SCENES['garage']).reset_and_start(self.home.garage_timer_delay)
             if garage.buttons[feedback.button_number] == 'vacation':
                 logger.info("Vacation button pressed.  Enabling vacation mode")
                 self.home.vacation_mode.enable()
@@ -41,7 +41,7 @@ class Lights(RadioRA):
             else:
                 self.home.vacation_mode.disable()
                 if garage.buttons[feedback.button_number] == 'home':
-                    self.home.stairs_light_timer.reset_and_start()
+                    self.home.get_scene_timer(ALL_SCENES['stairs up']).reset_and_start(self.home.stairs_timer_delay)
         else:
             self.home.vacation_mode.disable()
 

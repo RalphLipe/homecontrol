@@ -8,8 +8,9 @@ logger = logging.getLogger(__name__)
 
 
 class TimedEvent:
-    def __init__(self, event_time):
+    def __init__(self, event_time, event_id: object = None):
         self.event_time = event_time
+        self.event_id = event_id
 
     def __lt__(self, other):
         if isinstance(other, TimedEvent):
@@ -62,11 +63,11 @@ class TimedEventQueue:
             bisect.insort(self._queue, event)
             self._check_event_queue.set()
 
-    def remove_events(self, event_class):
+    def remove_events(self, event_class, event_id: object = None):
         with self._lock:
             new_queue = []
             for event in self._queue:
-                if not isinstance(event, event_class):
+                if (not isinstance(event, event_class)) or event.event_id != event_id:
                     new_queue.append(event)
             self._queue = new_queue
             # Do not need to set the _check_event_queue event because it's not possible to have a shorter timeout now

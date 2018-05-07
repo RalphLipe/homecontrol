@@ -1,54 +1,39 @@
 from timedevent import TimedEvent
 from datetime import datetime, timedelta
 from radiora.scene import Scene
-from scenes import ZONES, VIRTUAL_SCENES
 
 
 import logging
 logger = logging.getLogger(__name__)
 
 
-class LightTimedEvent(TimedEvent):
-    def __init__(self, light_timer):
-        TimedEvent.__init__(self, datetime.now() + light_timer.delay)
-        self.light_timer = light_timer
+class SceneTimedEvent(TimedEvent):
+    def __init__(self, home, scene: Scene, delay: timedelta):
+        TimedEvent.__init__(self, datetime.now() + delay, event_id=scene)
+        self.home = home
+        self.scene = scene
 
     def execute(self):
-        logger.info("Light timer turning off %s", self.light_timer.zone)
-        self.light_timer.zone.off(self.light_timer.home.lights)
+        logger.info("Light timer turning off %s", self.scene)
+        self.scene.off(self.home.lights)
 
 
-class LightTimer:
-    def __init__(self, home, delay: int, zone: Scene, light_event_class):
+class SceneTimer:
+    def __init__(self, home, scene: Scene):
         self.home = home
-        self.delay = timedelta(seconds=delay)
-        self.zone = zone
-        self.light_event_class = light_event_class
+        self.scene = scene
 
-    def reset_and_start(self):
+    def reset_and_start(self, delay_seconds: int):
         self.stop()
-        if self.delay.total_seconds() > 0:
-            logger.info("Starting %s timer", self.zone)
-            self.home.timed_event_queue.add_event(self.light_event_class(self))
+        if delay_seconds > 0:
+            logger.info("Starting %s timer for %i seconds", self.scene, delay_seconds)
+            self.home.timed_event_queue.add_event(
+                SceneTimedEvent(self.home, self.scene, timedelta(seconds=delay_seconds)))
         else:
-            logger.info("Timer %s not started because it is disabled in the current configuration", self.zone)
+            logger.info("Timer %s not started because 0 second delay (disabled in current configuration?)", self.scene)
 
     def stop(self):
-        logger.info("Stopping %s timer", self.zone)
-        self.home.timed_event_queue.remove_events(self.light_event_class)
+        logger.info("Stopping %s timer", self.scene)
+        self.home.timed_event_queue.remove_events(SceneTimedEvent, event_id=self.scene)
 
 
-class GarageTimer(LightTimer):
-    class GarageTimedEvent(LightTimedEvent):
-        pass
-
-    def __init__(self, home, delay: int):
-        LightTimer.__init__(self, home, delay, ZONES['garage'], self.GarageTimedEvent)
-
-
-class StairsTimer(LightTimer):
-    class StairsTimedEvent(LightTimedEvent):
-        pass
-
-    def __init__(self, home, delay: int):
-        LightTimer.__init__(self, home, delay, VIRTUAL_SCENES['stairs down'], self.StairsTimedEvent)

@@ -2,7 +2,7 @@ import argparse
 import scenes
 import threading
 
-
+from scenes import save_scenes, save_shades
 from __init__ import Home, save_config
 
 
@@ -26,6 +26,8 @@ if __name__ == "__main__":
     parser.add_argument('-config', type=str, help="Name of a configuration file")
     parser.add_argument('-saveconfig', type=str, help="File name to write default configuration parameters to")
     parser.add_argument('-printscenes', action='store_true', help="Print out a list of scenes for lights and shades")
+    parser.add_argument('-savescenes', type=str, help="File name to write scene json to")
+    parser.add_argument('-saveshades', type=str, help="File name to write shades json to")
     args = parser.parse_args()
 
     if args.printscenes:
@@ -34,7 +36,13 @@ if __name__ == "__main__":
     if args.saveconfig:
         save_config(args.saveconfig)
 
-    if args.printscenes or args.saveconfig:
+    if args.savescenes:
+        save_scenes(args.savescenes)
+
+    if args.saveshades:
+        save_shades(args.saveshades)
+
+    if args.printscenes or args.saveconfig or args.savescenes or args.saveshades:
         quit(0)
 
     house = Home(args.config)

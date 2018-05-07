@@ -5,10 +5,11 @@ from persistentstore import PersistentStore
 from lights import Lights
 from timedevent import TimedEventQueue
 from vacationmode import VacationMode
-from garagetimer import GarageTimer, StairsTimer
+from garagetimer import SceneTimer
 from sqsevents import SqsEvents
 from somfyrts import SomfyRTS
 from somfyrts.serialstub import SerialStub
+from radiora.scene import Scene
 
 import logging
 logger = logging.getLogger(__name__)
@@ -66,6 +67,8 @@ class Home:
         self.exit_code = 0
         self.shut_down_event = Event()
 
+        self.scene_timers = {}
+
         if file:
             config = load_config(file)
         else:
@@ -84,8 +87,8 @@ class Home:
         self.timed_event_queue = TimedEventQueue()
         # TODO:  More vacation mode options in config.
         self.vacation_mode = VacationMode(self)
-        self.garage_light_timer = GarageTimer(self, config['garage_delay'])
-        self.stairs_light_timer = StairsTimer(self, config['stairs_delay'])
+        self.garage_timer_delay = config['garage_delay']
+        self.stairs_timer_delay = config['stairs_delay']
 
         port_lights = config['port_lights']
         if port_lights == "TEST":
@@ -113,6 +116,14 @@ class Home:
     def __exit__(self, exc_type, exc_val, exc_tb):
         """Calls self.stop() to shut down all threads"""
         self.stop()
+
+    def get_scene_timer(self, scene: Scene) -> SceneTimer:
+        if scene in self.scene_timers:
+            timer = self.scene_timers[scene]
+        else:
+            timer = SceneTimer(self, scene)
+            self.scene_timers[scene] = timer
+        return timer
 
     def stop(self):
         logger.info("Stopping house services")

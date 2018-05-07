@@ -36,18 +36,25 @@ class SqsEvents:
                     msg_time = datetime.fromtimestamp(epoch_ms / 1000)
                     msg_age = datetime.now() - msg_time
                     if msg_age > self.max_message_age:
-                        logger.info("Discarding event because it was sent {0} seconds ago".format(msg_age.total_seconds()))
+                        logger.info("Discarding event sent {0} seconds ago".format(msg_age.total_seconds()))
                     else:
-                        event = json.loads(msg.body)
-                        if 'event_type' in event:
-                            if event['event_type'] == 'change_lights':
-                                self._do_light_event(event)
-                            elif event['event_type'] == 'change_shades':
-                                self._do_shade_event(event)
-                            elif event['event_type'] == 'reboot':
-                                self.home.shut_down(255)
+                        try:
+                            event = json.loads(msg.body)
+                            if 'event_type' in event:
+                                if event['event_type'] == 'change_lights':
+                                    self._do_light_event(event)
+                                elif event['event_type'] == 'change_shades':
+                                    self._do_shade_event(event)
+                                elif event['event_type'] == 'reboot':
+                                    self.home.shut_down(255)
+                                elif event['event_type'] == 'vacation_mode':
+                                    self._do_vacation_mode_event(event)
+                                else:
+                                    logger.error("Unknown event type {0}".format(msg.body))
                             else:
-                                logger.error("Unable to parse parameters for event")
+                                logger.error("No 'event_type' member in event {0}".format(msg.body))
+                        except Exception as inst:
+                            logger.error("Excpetion processing message {0} exception {1}".format(msg.body, inst))
                     msg.delete()
         except Exception as inst:
             print("Exception during queue event servicing {0}".format(inst))
@@ -66,7 +73,15 @@ class SqsEvents:
             elif action == "dim":
                 scene.dim(self.home.lights)
             else:
-                logger.error("Unknown action '{0}' for light event".format(action))
+                try:
+                    time = int(action)
+                except ValueError:
+                    time = 0
+                if time > 0:
+                    scene.on(self.home.lights)
+                    self.home.get_scene_timer(scene).reset_and_start(delay_seconds=time)
+                else:
+                    logger.error("Unknown action '{0}' for light event".format(action))
         else:
             logger.error("Unknown scene '{0}' for light event.".format(scene_name))
 
@@ -89,6 +104,16 @@ class SqsEvents:
             elif action == "stop":
                 self.home.shades.stop(shade)
             else:
-                logger.error("Unknown action for light event")
+                logger.error("Unknown action for shade event")
         else:
-            logger.error("Unknown room {0} for light event.".format(room))
+            logger.error("Unknown room {0} for shade event.".format(room))
+
+    def _do_vacation_mode_event(self, event):
+        action = event['action']
+        if action == 'enable':
+            self.home.vacation_mode.enable()
+        elif action == 'disable':
+            self.home.vacation_mode.disable()
+        else:
+            logger.error("Unknown action %s for vacation mode", action)
+
