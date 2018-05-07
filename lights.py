@@ -41,7 +41,7 @@ class Lights(RadioRA):
             else:
                 self.home.vacation_mode.disable()
                 if garage.buttons[feedback.button_number] == 'home':
-                    self.home.get_scene_timer(ALL_SCENES['stairs up']).reset_and_start(self.home.stairs_timer_delay)
+                    self.home.get_scene_timer(ALL_SCENES['stairs down']).reset_and_start(self.home.stairs_timer_delay)
         else:
             self.home.vacation_mode.disable()
 
