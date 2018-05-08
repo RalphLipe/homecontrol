@@ -109,11 +109,7 @@ class SqsEvents:
             logger.error("Unknown room {0} for shade event.".format(room))
 
     def _do_vacation_mode_event(self, event):
-        action = event['action']
-        if action == 'enable':
+        if event['enable']:
             self.home.vacation_mode.enable()
-        elif action == 'disable':
-            self.home.vacation_mode.disable()
         else:
-            logger.error("Unknown action %s for vacation mode", action)
-
+            self.home.vacation_mode.disable()
