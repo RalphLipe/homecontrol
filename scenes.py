@@ -88,6 +88,8 @@ _DOWNSTAIRS = PhantomButton(['basement', 'all the basement', 'downstairs', 'all 
                              'all the lights downstairs'], button_on=1, button_off=1)
 _MASTER_SUITE = CompositeScene(['master suite', 'master'], (ZONES['master bedroom'], ZONES['master bathroom'],
                                                             ZONES['master closet'], ZONES['master toilet']))
+_UPSTAIRS = CompositeScene(['all the upstairs', 'all the lights upstairs'], (_MASTER_SUITE, ZONES['stairs up'],
+                           ZONES['upstairs bathroom'], ZONES['upstairs bedroom'], ZONES['packing room']))
 
 VIRTUAL_SCENES = SceneGroup((
     _STAIRS_DOWN,
@@ -96,15 +98,15 @@ VIRTUAL_SCENES = SceneGroup((
     _MAIN_FLOOR,
     _DOWNSTAIRS,
     _MASTER_SUITE,
+    _UPSTAIRS,
     CompositeScene('stairs', (_STAIRS_DOWN, ZONES['stairs up'])),
     CompositeScene(['outside', 'yard', 'outdoor'], (_FRONT_YARD, ZONES['backyard'])),
     CompositeScene(['powder room', 'powder'], (ZONES['powder lights'], ZONES['powder sink'])),
     CompositeScene('kitchen and nook', (ZONES['kitchen'], ZONES['nook'])),
     CompositeScene('theater', (ZONES['theater cans'], ZONES['theater background'])),
-    CompositeScene(['all the upstairs', 'all the lights upstairs'], (_MASTER_SUITE, ZONES['stairs up'],
-                   ZONES['upstairs bathroom'], ZONES['upstairs bedroom'], ZONES['packing room'])),
     CompositeScene('master bathroom and closet', (ZONES['master bathroom'], ZONES['master toilet'],
                                                   ZONES['master closet'])),
+    CompositeScene(['all interior', 'all the interior', 'every interior'], (_UPSTAIRS, _MAIN_FLOOR, _DOWNSTAIRS)),
     PhantomButton('hall', button_on=4, button_off=5),
     PhantomButton(['all the', 'all the lights'], button_on=16, button_off=12),
     SubScene('patio', ZONES['backyard'], 'patio', 'path only'),
