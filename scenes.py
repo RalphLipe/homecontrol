@@ -121,7 +121,8 @@ VIRTUAL_SCENES = SceneGroup((
              off=[_ENTRY, ZONES['dining']]),
     UseScene(['watch movie', 'watch a movie'], dim=[ZONES['theater background']], off=[ZONES['theater cans']]),
     UseScene('bedtime',
-             off=[_MAIN_FLOOR, _DOWNSTAIRS, ZONES['stairs up'], ZONES['packing room'], ZONES['upstairs bedroom']])
+             off=[_MAIN_FLOOR, _DOWNSTAIRS,
+                  ZONES['stairs up'], ZONES['upstairs bathroom'], ZONES['packing room'], ZONES['upstairs bedroom']])
     ))
 
 VACATION_SCENES = SceneGroup((
