@@ -25,7 +25,7 @@ DEFAULT_CONFIG = {
     # Serial port for shades
     'port_shades': 'TEST',
     # Name of AWS SQS queue for command messages
-    'queue_name': 'SimpleFirst.fifo',
+    'queue_name': 'NOTUSED-SimpleFirst.fifo',
     # Maximum age (in seconds) of command messages before they are discarded
     'max_message_age': 90,
     # Number of seconds to delay before shutting off garage lights automatically.  0 disables.
@@ -104,7 +104,9 @@ class Home:
         # SqsEvents.  Lights are used by SqsEvents.
         self.shades = SomfyRTS(port_shades, thread=True)
         self.lights = Lights(self, port_lights)
-        self.sqs_events = SqsEvents(self, config['queue_name'], config['max_message_age'])
+        # FOR NOW ALL SQSEVENTS ARE DISABLED
+        # self.sqs_events = SqsEvents(self, config['queue_name'], config['max_message_age'])
+        logger.info("AWS Events are disabled")
 
         # Now make sure vacation mode is re-enabled if it is currenly on in the persistent store (power failed)
         self.vacation_mode.init_from_persistent_store()
@@ -130,7 +132,7 @@ class Home:
         self.running = False
 
         self.timed_event_queue.stop()
-        self.sqs_events.stop()
+        # self.sqs_events.stop()
         self.lights.stop()
         self.shades.close()
 
